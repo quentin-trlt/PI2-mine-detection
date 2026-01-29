@@ -1,5 +1,5 @@
 """
-Configuration centralisée pour le projet de classification
+Configuration centralisÃ©e pour le projet de classification
 """
 import os
 from pathlib import Path
@@ -18,12 +18,12 @@ TFLITE_DIR = MODELS_DIR / "tflite"
 KAGGLE_DATASET = "asdasdasasdas/garbage-classification"
 KAGGLE_TOKEN = "KGAT_b301a4f90e5a03263c70251ad924c06c"
 
-# Paramètres images
+# ParamÃ¨tres images
 IMG_SIZE = 224
 IMG_CHANNELS = 3
 INPUT_SHAPE = (IMG_SIZE, IMG_SIZE, IMG_CHANNELS)
 
-# Paramètres training
+# ParamÃ¨tres training
 BATCH_SIZE = 32
 EPOCHS = 50
 LEARNING_RATE = 0.001
@@ -44,7 +44,7 @@ AUGMENTATION_CONFIG = {
     'brightness_range': [0.8, 1.2]
 }
 
-# Modèles disponibles
+# ModÃ¨les disponibles
 AVAILABLE_MODELS = {
     'mobilenetv2': {
         'name': 'MobileNetV2',
@@ -58,20 +58,20 @@ AVAILABLE_MODELS = {
     }
 }
 
-# Modèle par défaut
+# ModÃ¨le par dÃ©faut
 DEFAULT_MODEL = 'mobilenetv2'
 
 # TFLite
 QUANTIZE = True
 REPRESENTATIVE_DATASET_SIZE = 100
 
-# Métriques
+# MÃ©triques
 METRICS_TO_TRACK = ['accuracy', 'precision', 'recall', 'f1']
-TARGET_RECALL = 0.95  # Objectif critique pour détection mines
+TARGET_RECALL = 0.95  # Objectif critique pour dÃ©tection mines
 
-# Classes (sera mis à jour après téléchargement)
+# Classes (sera mis Ã  jour aprÃ¨s tÃ©lÃ©chargement)
 CLASSES = ['cardboard', 'glass', 'metal', 'paper', 'plastic', 'trash']
 NUM_CLASSES = len(CLASSES)
 
-# Seed pour reproductibilité
+# Seed pour reproductibilitÃ©
 RANDOM_SEED = 42

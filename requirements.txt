@@ -1,10 +1,11 @@
-tensorflow==2.18.0
-numpy==1.26.4
+tensorflow==2.20.0
+numpy==2.0.2
 pillow==10.2.0
 matplotlib==3.8.2
 seaborn==0.13.1
-scikit-learn==1.4.0
+scikit-learn==1.5.0
 kaggle==1.6.6
 pandas==2.2.0
 tqdm==4.66.1
 opencv-python==4.10.0.84
+psutil==6.1.0
