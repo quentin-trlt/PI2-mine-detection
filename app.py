@@ -11,9 +11,28 @@ from tkinter import filedialog, ttk
 import time
 import psutil
 import threading
+import subprocess
 
 sys.path.append(str(Path(__file__).parent))
 import config
+
+
+def speak(text: str) -> None:
+    """Announce text using TTS. Tries pyttsx3 first, then macOS 'say'."""
+    def _run():
+        try:
+            import pyttsx3
+            engine = pyttsx3.init()
+            engine.say(text)
+            engine.runAndWait()
+            engine.stop()
+        except Exception:
+            try:
+                subprocess.run(["say", text], check=False)
+            except Exception:
+                pass
+
+    threading.Thread(target=_run, daemon=True).start()
 
 
 class ModelTesterApp:
@@ -24,6 +43,7 @@ class ModelTesterApp:
 
         self.interpreter = None
         self.model_loaded = False
+        self.vocal_enabled = True
 
         self.setup_ui()
 
@@ -36,6 +56,10 @@ class ModelTesterApp:
 
         tk.Button(btn_frame, text="Sélectionner Image", command=self.select_image,
                   bg="#2196F3", fg="white", font=("Arial", 12), padx=20).pack(side=tk.LEFT, padx=5)
+
+        self.vocal_btn = tk.Button(btn_frame, text="🔊 Vocal ON", command=self.toggle_vocal,
+                                   bg="#FF9800", fg="white", font=("Arial", 12), padx=10)
+        self.vocal_btn.pack(side=tk.LEFT, padx=5)
 
         self.status_label = tk.Label(self.root, text="Aucun modèle chargé",
                                      font=("Arial", 10), fg="red")
@@ -53,6 +77,13 @@ class ModelTesterApp:
 
         self.result_text = tk.Text(result_frame, height=8, font=("Courier", 11))
         self.result_text.pack(padx=10, pady=10, fill=tk.BOTH, expand=True)
+
+    def toggle_vocal(self):
+        self.vocal_enabled = not self.vocal_enabled
+        if self.vocal_enabled:
+            self.vocal_btn.config(text="🔊 Vocal ON", bg="#FF9800")
+        else:
+            self.vocal_btn.config(text="🔇 Vocal OFF", bg="#9E9E9E")
 
     def load_model(self):
         model_path = filedialog.askopenfilename(
@@ -166,6 +197,25 @@ class ModelTesterApp:
         self.result_text.tag_config("bold", font=("Courier", 11, "bold"))
         self.result_text.tag_config("warning", foreground="#FF5722", font=("Courier", 12, "bold"))
         self.result_text.tag_config("success", foreground="#4CAF50", font=("Courier", 12, "bold"))
+
+        # Annonce vocale
+        if self.vocal_enabled:
+            top3_announcement = ", ".join(
+                f"{config.CLASSES[idx]} {predictions[idx]:.0%}"
+                for idx in top3_idx
+                if predictions[idx] > 0.005
+            )
+            if confidence < 0.5:
+                alert = "Attention, confiance faible."
+            else:
+                alert = "Confiance acceptable."
+            announcement = (
+                f"Résultat : {config.CLASSES[top_idx]}, "
+                f"{confidence:.0%} de fiabilité. "
+                f"{alert} "
+                f"Top 3 : {top3_announcement}."
+            )
+            speak(announcement)
 
 
 if __name__ == "__main__":
